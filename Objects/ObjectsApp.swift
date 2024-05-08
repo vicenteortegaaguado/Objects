@@ -11,7 +11,7 @@ import SwiftUI
 struct ObjectsApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            CoordinatorView(coordinator: .init(root: .itemList(vm: .init())))
         }
     }
 }
