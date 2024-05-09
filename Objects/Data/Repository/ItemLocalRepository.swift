@@ -26,23 +26,14 @@ final class ItemLocalRepository: ItemLocalRepositoryProtocol {
     - parameter filter: Filter the objects by name.
     - returns: Array with the objects
     */
-    @MainActor func fetch(filter: String? = nil) -> [Item]? {
-        let context = LocalRepository.persistentContainer.viewContext
+    func fetch(filter: String? = nil) -> [Item]? {
         let request = Item.fetchRequest()
-    
+        // TODO: - Extract the logic to be able to setup from function parametes
         if let filter = filter, !filter.isEmpty {
             request.predicate = NSPredicate(format: "name CONTAINS[cd] %@", filter)
         }
         request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
-        do {
-            return try context.fetch(request)
-        } catch let error {
-            // TODO: - Manage Error
-            print("error: \(error.localizedDescription)")
-            return nil
-        }
-        // TODO: - Manage Generic, is not working fine when you filter
-//        return localRepository.fetchObjects(filter: filter, model: Item.self)
+        return localRepository.fetchObjects(withFetchRequest: request)
     }
     /**
      Fetch the relation from an object
@@ -67,7 +58,7 @@ final class ItemLocalRepository: ItemLocalRepositoryProtocol {
         if let currentObject = currentObject {
             item = currentObject
         } else {
-            let context = LocalRepository.persistentContainer.viewContext
+            let context = localRepository.viewContext
             item = Item(context: context)
         }
         
@@ -90,7 +81,7 @@ final class ItemLocalRepository: ItemLocalRepositoryProtocol {
     - returns: None
     */
     @MainActor func delete(object: Item) {
-        LocalRepository.persistentContainer.viewContext.delete(object)
+        localRepository.viewContext.delete(object)
         localRepository.saveContext()
     }
 }

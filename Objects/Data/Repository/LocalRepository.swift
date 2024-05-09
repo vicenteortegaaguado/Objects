@@ -9,15 +9,15 @@ import Foundation
 import CoreData
 
 protocol LocalRepositoryProtocol: AnyObject {
-    static var persistentContainer: NSPersistentCloudKitContainer { get }
+    var viewContext: NSManagedObjectContext { get }
     
-    func fetchObjects<T: NSManagedObject>(filter: String?, model: T.Type) -> [T]?
+    func fetchObjects<T: NSManagedObject>(withFetchRequest request: NSFetchRequest<T>) -> [T]?
     func saveContext()
 }
 
 /// Repository handling persistent store.
 final class LocalRepository: LocalRepositoryProtocol {
-    static var persistentContainer: NSPersistentCloudKitContainer = {
+    private var persistentContainer: NSPersistentCloudKitContainer = {
         let container = NSPersistentCloudKitContainer(name: "Objects")
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
@@ -28,10 +28,17 @@ final class LocalRepository: LocalRepositoryProtocol {
     }()
     
     /**
+     Current context
+     */
+    var viewContext: NSManagedObjectContext {
+        persistentContainer.viewContext
+    }
+    
+    /**
      Core Data Saving support
      */
     func saveContext() {
-        let context = LocalRepository.persistentContainer.viewContext
+        let context = persistentContainer.viewContext
         if context.hasChanges {
             do {
                 try context.save()
@@ -46,23 +53,15 @@ final class LocalRepository: LocalRepositoryProtocol {
     }
     /**
      Fetch the objects from persistent store
-    - parameter filter: Filter the objects by name.
+    - parameter request: setup
     - returns: Array with the objects
     */
-    func fetchObjects<T: NSManagedObject>(filter: String? = nil, model: T.Type) -> [T]? {
-        let context = LocalRepository.persistentContainer.viewContext
-        let request = NSFetchRequest<T>()
-    
-        if let filter = filter, !filter.isEmpty {
-            request.predicate = NSPredicate(format: "name CONTAINS[cd] %@", filter)
-        }
-        request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
+    func fetchObjects<T: NSManagedObject>(withFetchRequest request: NSFetchRequest<T>) throws -> [T]? {
+        let context = persistentContainer.viewContext
         do {
-            return try context.fetch(NSFetchRequest<T>(entityName: String(describing: T.self)))
+            return try context.fetch(request)
         } catch let error {
-            // TODO: - Manage Error
-            print("error: \(error.localizedDescription)")
-            return nil
+            
         }
     }
 }
