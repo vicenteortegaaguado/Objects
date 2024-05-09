@@ -47,12 +47,8 @@ extension ItemDetailViewModel {
     - parameter type: The type of the object
     - returns: None
     */
-    func save(name: String, detail: String, type: String) {
-        do {
-            item = try repository.save(name: name, detail: detail, type: type, relationships: relationShips, currentObject: item)
-        } catch {
-            print("Error: \(error)")
-        }
+    func save(name: String, detail: String, type: String) throws {
+        item = try repository.save(name: name, detail: detail, type: type, relationships: relationShips, currentObject: item)
         reset()
     }
     
@@ -75,9 +71,7 @@ extension ItemDetailViewModel {
     */
     func getRelationships() -> RelationshipsListViewModel {
         return RelationshipsListViewModel(repository: repository, selection: relationShips ?? []) { [weak self] selection in
-            DispatchQueue.main.async {
-                self?.relationShips = selection
-            }
+            self?.relationShips = selection
         }
     }
 }

@@ -54,7 +54,9 @@ struct ItemDetailView: View {
     }
     
     private func save() {
-        viewModel.save(name: name, detail: detail, type: type)
+        coordinator.request {
+            try viewModel.save(name: name, detail: detail, type: type)
+        }
     }
     
     private func reset() {

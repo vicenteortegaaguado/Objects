@@ -36,7 +36,7 @@ final class ItemLocalRepository: ItemLocalRepositoryProtocol {
         do {
             return try localRepository.fetchObjects(withFetchRequest: request)
         } catch {
-            throw AppError.ItemRepository.Local.fetch(error)
+            throw AppException.itemRepository(.local(.fetch(error)))
         }
     }
     /**
@@ -79,7 +79,7 @@ final class ItemLocalRepository: ItemLocalRepositoryProtocol {
         do {
             try localRepository.saveContext()
         } catch {
-            throw AppError.ItemRepository.Local.save(error)
+            throw AppException.itemRepository(.local(.save(error)))
         }
         return item
     }
@@ -93,7 +93,7 @@ final class ItemLocalRepository: ItemLocalRepositoryProtocol {
         do {
             try localRepository.saveContext()
         } catch {
-            throw AppError.ItemRepository.Local.delete(error)
+            throw AppException.itemRepository(.local(.delete(error)))
         }
     }
 }

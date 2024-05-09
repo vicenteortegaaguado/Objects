@@ -31,6 +31,13 @@ struct CoordinatorView: View {
                 }
         }
         .environment(coordinator)
+        .alert("Exception", isPresented: $coordinator.isExeptionPresented, actions: {
+            Button("Close") {
+                coordinator.exception = nil
+            }
+        }, message: {
+            Text(coordinator.exception?.message ?? AppException.unknown.message)
+        })
     }
 }
 
@@ -40,6 +47,12 @@ final class Coordinator {
     fileprivate var path: [Screen] = []
     fileprivate var root: Screen
     fileprivate var sheet: Screen?
+    fileprivate var isExeptionPresented: Bool = false
+    fileprivate var exception: AppException? {
+        didSet {
+            isExeptionPresented = exception != nil
+        }
+    }
     
     init(root: Screen) {
         self.root = root
@@ -63,6 +76,14 @@ final class Coordinator {
     
     func dissmiss() {
         sheet = nil
+    }
+    
+    func request(completion: @escaping () throws -> Void) {
+        do {
+            try completion()
+        } catch {
+            exception = error as? AppException
+        }
     }
 }
 

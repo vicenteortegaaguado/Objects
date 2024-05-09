@@ -22,9 +22,18 @@ struct ItemListView: View {
             }
             .onDelete(perform: deleteItems)
         }
-        .onAppear { viewModel.fetch() }
+        .onAppear { 
+            coordinator.request {
+                try viewModel.fetch()
+            }
+        }
         .searchable(text: $searchText)
-        .onChange(of: searchText, { oldValue, newValue in viewModel.fetch(filter: newValue) })
+        .onChange(of: searchText, {
+            oldValue, newValue in 
+            coordinator.request {
+                try viewModel.fetch(filter: newValue)
+            }
+        })
         .navigationTitle("List")
         .navigationDestination(for: Item.self) { item in
             ItemDetailView(viewModel: viewModel.getDetail(item: item))
@@ -40,7 +49,9 @@ struct ItemListView: View {
     
     private func deleteItems(offsets: IndexSet) {
         withAnimation {
-            viewModel.delete(with: offsets)
+            coordinator.request {
+                try viewModel.delete(with: offsets)
+            }
         }
     }
 }

@@ -33,16 +33,22 @@ struct RelationshipsListView: View {
         }
         .searchable(text: $searchText)
         .onChange(of: searchText, { oldValue, newValue in
-            viewModel.fetch(filter: newValue)
+            fetch(filter: newValue)
         })
         .navigationTitle("Relationships")
         .onAppear {
-            viewModel.fetch()
+            fetch()
         }
         .onDisappear {
             withAnimation {
                 viewModel.updateSelection()
             }
+        }
+    }
+    
+    private func fetch(filter text: String? = nil) {
+        coordinator.request {
+            try viewModel.fetch(filter: text)
         }
     }
 }
