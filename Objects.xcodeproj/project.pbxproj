@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8026B3282BEC9ABB00AA8926 /* AppError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8026B3272BEC9ABB00AA8926 /* AppError.swift */; };
 		8061648D2BEB2EEC0051642E /* ObjectsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8061648C2BEB2EEC0051642E /* ObjectsApp.swift */; };
 		806164912BEB2EED0051642E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 806164902BEB2EED0051642E /* Assets.xcassets */; };
 		806164942BEB2EED0051642E /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 806164932BEB2EED0051642E /* Preview Assets.xcassets */; };
@@ -47,6 +48,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		8026B3272BEC9ABB00AA8926 /* AppError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppError.swift; sourceTree = "<group>"; };
 		806164892BEB2EEC0051642E /* Objects.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Objects.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8061648C2BEB2EEC0051642E /* ObjectsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectsApp.swift; sourceTree = "<group>"; };
 		806164902BEB2EED0051642E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -97,6 +99,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8026B3262BEC9A8B00AA8926 /* AppError */ = {
+			isa = PBXGroup;
+			children = (
+				8026B3272BEC9ABB00AA8926 /* AppError.swift */,
+			);
+			path = AppError;
+			sourceTree = "<group>";
+		};
 		806164802BEB2EEB0051642E = {
 			isa = PBXGroup;
 			children = (
@@ -158,6 +168,7 @@
 		806164B62BEB319C0051642E /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				8026B3262BEC9A8B00AA8926 /* AppError */,
 				806165052BEB3A620051642E /* Repository */,
 				806164B72BEB31A10051642E /* Model */,
 			);
@@ -381,6 +392,7 @@
 				806165042BEB38960051642E /* Item+CoreDataProperties.swift in Sources */,
 				806164BD2BEB32360051642E /* Objects.xcdatamodeld in Sources */,
 				806165162BEB4D1A0051642E /* ItemMockLocalRepository.swift in Sources */,
+				8026B3282BEC9ABB00AA8926 /* AppError.swift in Sources */,
 				806165142BEB4B840051642E /* ItemDetailViewModel.swift in Sources */,
 				8061648D2BEB2EEC0051642E /* ObjectsApp.swift in Sources */,
 			);

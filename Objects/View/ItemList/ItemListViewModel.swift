@@ -30,19 +30,27 @@ extension ItemListViewModel {
     - returns: None
     */
     func fetch(filter: String? = nil) {
-        items = repository.fetch(filter: filter)
+        do {
+            items = try repository.fetch(filter: filter)
+        } catch {
+            print("Error: \(error)")
+        }
     }
     
     /**
      Delete object by IndexSet
     - parameter indexSet: IndexSet for finding and deleting object
     - returns: None
-    */
+     */
     func delete(with indexSet: IndexSet) {
         for index in indexSet {
             if let item = items?[index] {
-                items?.remove(at: index)
-                repository.delete(object: item)
+                do {
+                    try repository.delete(object: item)
+                    items?.remove(at: index)
+                } catch {
+                    print("Error: \(error)")
+                }
             }
         }
     }

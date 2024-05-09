@@ -8,10 +8,10 @@
 import Foundation
 
 protocol ItemLocalRepositoryProtocol: AnyObject {
-    func fetch(filter: String?) -> [Item]?
-    func fetchRelationships(object: Item) -> [Item]?
-    func save(name: String, detail: String, type: String, relationships: [Item]?, currentObject: Item?) -> Item
-    func delete(object: Item)
+    func fetch(filter: String?) throws -> [Item]?
+    func fetchRelationships(object: Item?) -> [Item]?
+    func save(name: String, detail: String, type: String, relationships: [Item]?, currentObject: Item?) throws -> Item
+    func delete(object: Item) throws
 }
 
 final class ItemLocalRepository: ItemLocalRepositoryProtocol {
@@ -26,22 +26,26 @@ final class ItemLocalRepository: ItemLocalRepositoryProtocol {
     - parameter filter: Filter the objects by name.
     - returns: Array with the objects
     */
-    func fetch(filter: String? = nil) -> [Item]? {
+    func fetch(filter: String? = nil) throws -> [Item]? {
         let request = Item.fetchRequest()
         // TODO: - Extract the logic to be able to setup from function parametes
         if let filter = filter, !filter.isEmpty {
             request.predicate = NSPredicate(format: "name CONTAINS[cd] %@", filter)
         }
         request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
-        return localRepository.fetchObjects(withFetchRequest: request)
+        do {
+            return try localRepository.fetchObjects(withFetchRequest: request)
+        } catch {
+            throw AppError.ItemRepository.Local.fetch(error)
+        }
     }
     /**
      Fetch the relation from an object
     - parameter object: Parent object.
     - returns: Array with objects that has the relationships with the object
     */
-    @MainActor func fetchRelationships(object: Item) -> [Item]? {
-        guard let objects = object.relationships?.allObjects,
+    @MainActor func fetchRelationships(object: Item?) -> [Item]? {
+        guard let objects = object?.relationships?.allObjects,
               let relationships = objects as? [Item] else {
             return nil
         }
@@ -51,8 +55,8 @@ final class ItemLocalRepository: ItemLocalRepositoryProtocol {
      Fetch the relation from an object
     - parameter object: Parent object.
     - returns: Array with objects that has the relationships with the object
-    */
-    @MainActor func save(name: String, detail: String, type: String, relationships: [Item]?, currentObject: Item?) -> Item {
+     */
+    @MainActor func save(name: String, detail: String, type: String, relationships: [Item]?, currentObject: Item?) throws -> Item {
         let item: Item
         
         if let currentObject = currentObject {
@@ -72,16 +76,24 @@ final class ItemLocalRepository: ItemLocalRepositoryProtocol {
                 item.addToRelationships(relationship)
             }
         }
-        localRepository.saveContext()
+        do {
+            try localRepository.saveContext()
+        } catch {
+            throw AppError.ItemRepository.Local.save(error)
+        }
         return item
     }
     /**
      Delete the object from persistent store.
-    - parameter object: Object to delete
-    - returns: None
-    */
-    @MainActor func delete(object: Item) {
+     - parameter object: Object to delete
+     - returns: None
+     */
+    @MainActor func delete(object: Item) throws {
         localRepository.viewContext.delete(object)
-        localRepository.saveContext()
+        do {
+            try localRepository.saveContext()
+        } catch {
+            throw AppError.ItemRepository.Local.delete(error)
+        }
     }
 }

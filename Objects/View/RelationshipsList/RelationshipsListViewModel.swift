@@ -29,7 +29,11 @@ final class RelationshipsListViewModel {
 extension RelationshipsListViewModel {
     
     func fetch(filter: String? = nil) {
-        items = repository.fetch(filter: filter)
+        do {
+            items = try repository.fetch(filter: filter)
+        } catch {
+            print("Error: \(error)")
+        }
     }
     
     func add(_ item: Item) {

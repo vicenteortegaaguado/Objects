@@ -22,7 +22,7 @@ final class ItemDetailViewModel {
     init(repository: ItemLocalRepositoryProtocol = ItemLocalRepository(), item: Item?) {
         self.repository = repository
         self.item = item
-        let relationShips = item?.relationships?.allObjects as? [Item]
+        let relationShips = repository.fetchRelationships(object: item)
         self.relationShips = relationShips
         self.oldRelationShips = relationShips
     }
@@ -35,7 +35,7 @@ extension ItemDetailViewModel {
     }
     
     func reset() {
-        let relationShips = item?.relationships?.allObjects as? [Item]
+        let relationShips = repository.fetchRelationships(object: item)
         self.relationShips = relationShips
         self.oldRelationShips = relationShips
     }
@@ -48,7 +48,11 @@ extension ItemDetailViewModel {
     - returns: None
     */
     func save(name: String, detail: String, type: String) {
-        item = repository.save(name: name, detail: detail, type: type, relationships: relationShips, currentObject: item)
+        do {
+            item = try repository.save(name: name, detail: detail, type: type, relationships: relationShips, currentObject: item)
+        } catch {
+            print("Error: \(error)")
+        }
         reset()
     }
     

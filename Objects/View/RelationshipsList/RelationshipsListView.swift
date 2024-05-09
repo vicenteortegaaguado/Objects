@@ -32,7 +32,9 @@ struct RelationshipsListView: View {
             }
         }
         .searchable(text: $searchText)
-        .onChange(of: searchText, { oldValue, newValue in viewModel.fetch(filter: newValue) })
+        .onChange(of: searchText, { oldValue, newValue in
+            viewModel.fetch(filter: newValue)
+        })
         .navigationTitle("Relationships")
         .onAppear {
             viewModel.fetch()
